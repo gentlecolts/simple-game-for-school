@@ -7,6 +7,7 @@ import java.awt.geom.Ellipse2D;
 public abstract class Ball {
 	public double xPos,yPos,xVel,yVel,xAccel,yAccel;
 	public double radius;
+	public double density;
 	
 	/**
 	 * Move the ball smoothly, check collisions
@@ -19,7 +20,13 @@ public abstract class Ball {
 		xVel+=xAccel*dt;
 		yVel+=yAccel*dt;
 		
+		setAccel(dt);
 		
+		for(int i=0;i<MainClass.enemies.size();i++) {
+			if(collides(MainClass.enemies.get(i))) {
+				bounce(MainClass.enemies.get(i));
+			}
+		}
 	}
 	
 	/**
@@ -48,7 +55,7 @@ public abstract class Ball {
 	 * @param totVelY
 	 */
 	public void bounce(Ball b, double totVelX, double totVelY) {
-		double totMass=radius*radius+b.radius*b.radius;
+		double totMass=radius*radius*density+b.radius*b.radius*b.density;
 		
 		xVel=totVelX*radius*radius/totMass;
 		yVel=totVelY*radius*radius/totMass;
@@ -92,9 +99,9 @@ public abstract class Ball {
 	 * @param posInWindowY	position y
 	 */
 	public void draw(Graphics2D g, double posInWindowX, double posInWindowY) {
-		g.setColor(new Color(22,33,44));
+		g.setColor(new Color(0,0,0));
 		
-		g.draw(new Ellipse2D.Double(posInWindowX-radius*MainClass.scale,posInWindowY-radius*MainClass.scale,radius*2*MainClass.scale,radius*2*MainClass.scale));
+		g.fill(new Ellipse2D.Double(posInWindowX-radius*MainClass.scale,posInWindowY-radius*MainClass.scale,radius*2*MainClass.scale,radius*2*MainClass.scale));
 	}
 	
 	public double distSq(Ball o) {

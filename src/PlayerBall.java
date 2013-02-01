@@ -6,7 +6,11 @@ public class PlayerBall extends Ball {
 	 * There can only be one player.
 	 */
 	private PlayerBall() {
+		xPos=MainClass.resolution/2;
+		yPos=MainClass.resolution/2;
 		
+		density=100;
+		radius=30;
 	}
 
 	@Override
