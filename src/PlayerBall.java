@@ -6,6 +6,7 @@ public class PlayerBall extends Ball {
 	 * There can only be one player.
 	 */
 	private PlayerBall() {
+		super();
 		xPos=MainClass.resolution/2;
 		yPos=MainClass.resolution/2;
 		

@@ -36,8 +36,8 @@ public class DodgeWindow extends JFrame {
 		g.setColor(Color.white);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		for(int i=0;i<MainClass.enemies.size();i++) {
-			Ball b=MainClass.enemies.get(i);
+		for(int i=0;i<MainClass.balls.size();i++) {
+			Ball b=MainClass.balls.get(i);
 //			System.out.println("ball location: "+(int)(b.xPos*MainClass.scale)+","+(int)(b.yPos*MainClass.scale));
 //			System.out.println("position: "+getLocationOnScreen().x+","+getLocationOnScreen().y);
 //			System.out.println(""+(b.xPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().x)+","+
@@ -51,14 +51,6 @@ public class DodgeWindow extends JFrame {
 				b.draw((Graphics2D)g, this);
 //			}
 		}
-		
-		Ball b=PlayerBall.player;
-//		if(b.xPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().x
-//				&& b.xPos*MainClass.scale-b.radius*MainClass.scale<getLocationOnScreen().x+getWidth()
-//				&& b.yPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().y
-//				&& b.yPos*MainClass.scale+b.radius*MainClass.scale<getLocationOnScreen().y+getHeight()) {
-			b.draw((Graphics2D)g, this);
-//		}
 	}
 	
 	/**

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class MainClass {
 
 	public static double scale;
-	public static ArrayList<Ball> enemies;
+	public static ArrayList<Ball> balls;
 	public static DodgeWindow[][] windows;
 	static Thread mainThread;
 	
@@ -32,10 +32,12 @@ public class MainClass {
 	 * Start the actual game, create the game windows
 	 */
 	public static void startGame() {
-		enemies=new ArrayList<Ball>(startEnemies);
+		balls=new ArrayList<Ball>(startEnemies+1);
+		
+		balls.add(PlayerBall.player);
 		
 		for(int i=0;i<startEnemies;i++) {
-			enemies.add(new EnemyBall(Math.random()*resolution,Math.random()*resolution));
+			balls.add(new EnemyBall(Math.random()*resolution,Math.random()*resolution));
 		}
 		
 		windows=new DodgeWindow[xWindows][yWindows];
@@ -59,8 +61,8 @@ public class MainClass {
 						for(int j=0;j<yWindows;j++)
 							windows[i][j].repaint();
 					
-					for(int i=0;i<enemies.size();i++) {
-						enemies.get(i).update(1000/30);
+					for(int i=0;i<balls.size();i++) {
+						balls.get(i).update(1000/30);
 					}
 				}
 			}

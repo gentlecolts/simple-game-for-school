@@ -8,6 +8,13 @@ public abstract class Ball {
 	public double xPos,yPos,xVel,yVel,xAccel,yAccel;
 	public double radius;
 	public double density;
+	public int id;
+	static int idCount=0;
+	
+	public Ball() {
+		id=idCount;
+		idCount++;
+	}
 	
 	/**
 	 * Move the ball smoothly, check collisions
@@ -22,9 +29,9 @@ public abstract class Ball {
 		
 		setAccel(dt);
 		
-		for(int i=0;i<MainClass.enemies.size();i++) {
-			if(collides(MainClass.enemies.get(i))) {
-				bounce(MainClass.enemies.get(i));
+		for(int i=0;i<MainClass.balls.size();i++) {
+			if(id<MainClass.balls.get(i).id && collides(MainClass.balls.get(i))) {
+				bounce(MainClass.balls.get(i));
 			}
 		}
 	}
@@ -41,11 +48,39 @@ public abstract class Ball {
 	 */
 	public void bounce(Ball b) {
 		//mv=mv
+		double dist=Math.sqrt(distSq(b));
+		double angle=Math.atan2(yPos-b.yPos, xPos-b.xPos);
+		double cosA=Math.cos(angle);
+		double sinA=Math.sin(angle);
 		
-		double totVelX=xVel+b.xVel,totVelY=yVel+b.yVel;
+		double rotXVel1=cosA*xVel+sinA*yVel;
+		double rotYVel1=cosA*yVel-sinA*xVel;
+		double rotXVel2=cosA*b.xVel+sinA*b.yVel;
+		double rotYVel2=cosA*b.yVel-sinA*b.xVel;
 		
-		bounce(b,totVelX,totVelY);
-		b.bounce(this,totVelX,totVelY);
+		double momentum=rotXVel1*mass()+rotXVel2*b.mass();
+		
+		double totVelX=xVel-b.xVel;
+		
+		rotXVel1=(momentum-b.mass()*totVelX)/(mass()+b.mass());
+		rotXVel2=totVelX+rotXVel1;
+		
+		bounce(b,rotXVel2,rotYVel2,sinA,cosA);
+		b.bounce(this,rotXVel1,rotXVel1,sinA,cosA);
+		
+		double diff=(radius+b.radius-dist)/2;
+		
+		double cosD=cosA*diff;
+		double sinD=cosD*diff;
+		
+		xPos-=cosD;
+		yPos-=sinD;
+		b.xPos+=cosD;
+		b.yPos+=sinD;
+	}
+	
+	public double mass() {
+		return radius*radius*density;
 	}
 	
 	/**
@@ -54,11 +89,9 @@ public abstract class Ball {
 	 * @param totVelX
 	 * @param totVelY
 	 */
-	public void bounce(Ball b, double totVelX, double totVelY) {
-		double totMass=radius*radius*density+b.radius*b.radius*b.density;
-		
-		xVel=totVelX*radius*radius/totMass;
-		yVel=totVelY*radius*radius/totMass;
+	public void bounce(Ball b, double rotXVel1, double rotYVel1, double sinA, double cosA) {
+		xVel=cosA*rotXVel1-sinA*rotYVel1;
+		yVel=cosA*rotYVel1+sinA*rotXVel1;
 	}
 	
 	/**
