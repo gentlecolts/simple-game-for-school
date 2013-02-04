@@ -18,11 +18,11 @@ public class PlayerKeys implements KeyListener{
 	//all four are pressed to allow 
 	//TODO determine if these should be bool or long, will need long to have acceleration
 	//TODO are these being accesed elsewhere? if not they can be private longs instead
-	AtomicLong
-		ltime=new AtomicLong(0),
-		rtime=new AtomicLong(0),
-		utime=new AtomicLong(0),
-		dtime=new AtomicLong(0);
+	AtomicBoolean
+		lDown=new AtomicBoolean(false),
+		rDown=new AtomicBoolean(false),
+		uDown=new AtomicBoolean(false),
+		dDown=new AtomicBoolean(false);
 	
 	//TODO vk is non numpad, is this an issue?
 	static final int
@@ -30,10 +30,10 @@ public class PlayerKeys implements KeyListener{
 		right=KeyEvent.VK_RIGHT,
 		up=KeyEvent.VK_UP,
 		down=KeyEvent.VK_DOWN,
-		w=(int)'w',
-		a=(int)'a',
-		s=(int)'s',
-		d=(int)'d';
+		w=KeyEvent.VK_W,
+		a=KeyEvent.VK_A,
+		s=KeyEvent.VK_S,
+		d=KeyEvent.VK_D;
 	public PlayerKeys(){
 		this(0,0);
 	}
@@ -43,30 +43,29 @@ public class PlayerKeys implements KeyListener{
 		xdub=x0;
 		ydub=y0;
 	}
+
 	
-	//constantly updating the x and y positions
-	class moveloop extends Thread{
-		public void run(){
-			long t,rdt,ldt,udt,ddt;
-			long dx,dy;
-			while(true){
-				t=System.currentTimeMillis();
-				ldt=ltime.get();
-				rdt=rtime.get();
-				udt=utime.get();
-				ddt=dtime.get();
-				
-				if(ldt!=0){ldt=t-ldt;}
-				if(rdt!=0){rdt=t-rdt;}
-				if(udt!=0){udt=t-udt;}
-				if(ddt!=0){ddt=t-ddt;}
-				
-				dx=2*(Math.min(rdt, 1000)-Math.min(ldt,1000))/1000;
-				dy=2*(Math.min(udt, 1000)-Math.min(ddt,1000))/1000;
-				x.addAndGet((int)dx);
-				y.addAndGet((int)dy);
-			}
+	double getXAccel(){
+		double accel=0;
+		if(rDown.get()) {
+			accel+=100;
 		}
+		if(lDown.get()) {
+			accel-=100;
+		}
+		return accel;
+	}
+
+	double getYAccel(){
+		double accel=0;
+		if(uDown.get()) {
+			accel-=100;
+		}
+		if(dDown.get()) {
+			accel+=100;
+		}
+		
+		return accel;
 	}
 	
 	//if the key is down and has not been down then set it 
@@ -74,19 +73,19 @@ public class PlayerKeys implements KeyListener{
 		switch(arg0.getKeyCode()){
 		case left:
 		case a:
-			ltime.compareAndSet(0,System.currentTimeMillis());
+			lDown.set(true);
 			break;
 		case right:
 		case d:
-			rtime.compareAndSet(0,System.currentTimeMillis());
+			rDown.set(true);
 			break;
 		case up:
 		case w:
-			utime.compareAndSet(0,System.currentTimeMillis());
+			uDown.set(true);
 			break;
 		case down:
 		case s:
-			dtime.compareAndSet(0,System.currentTimeMillis());
+			dDown.set(true);
 			break;
 		}
 	}
@@ -96,19 +95,19 @@ public class PlayerKeys implements KeyListener{
 		switch(arg0.getKeyCode()){
 		case left:
 		case a:
-			ltime.set(0);
+			lDown.set(false);
 			break;
 		case right:
 		case d:
-			rtime.set(0);
+			rDown.set(false);
 			break;
 		case up:
 		case w:
-			utime.set(0);
+			uDown.set(false);
 			break;
 		case down:
 		case s:
-			dtime.set(0);
+			dDown.set(false);
 			break;
 		}
 	}

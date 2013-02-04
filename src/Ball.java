@@ -71,8 +71,8 @@ public abstract class Ball {
 		double normalVel1Prime=(normalVel1*(mass()-b.mass())+2*b.mass()*normalVel2)/(mass()+b.mass());
 		double normalVel2Prime=(normalVel2*(b.mass()-mass())+2*mass()*normalVel1)/(mass()+b.mass());
 		
-		bounce(unitNormalX*normalVel1Prime+unitTangentX*tangentVel1,unitNormalY*normalVel1Prime+unitTangentY*tangentVel1);
-		b.bounce(unitNormalX*normalVel2Prime+unitTangentX*tangentVel2,unitNormalY*normalVel2Prime+unitTangentY*tangentVel2);
+		bounce(b, unitNormalX*normalVel1Prime+unitTangentX*tangentVel1,unitNormalY*normalVel1Prime+unitTangentY*tangentVel1);
+		b.bounce(this, unitNormalX*normalVel2Prime+unitTangentX*tangentVel2,unitNormalY*normalVel2Prime+unitTangentY*tangentVel2);
 		
 		double angle=Math.atan2(yPos-b.yPos, xPos-b.xPos);
 		double cosA=Math.cos(angle);
@@ -98,7 +98,7 @@ public abstract class Ball {
 	 * @param nXVel
 	 * @param nYVel
 	 */
-	public void bounce(double nXVel, double nYVel) {
+	public void bounce(Ball b, double nXVel, double nYVel) {
 		xVel=nXVel;
 		yVel=nYVel;
 	}

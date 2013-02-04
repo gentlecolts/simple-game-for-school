@@ -9,6 +9,7 @@ public class MainClass {
 	public static ArrayList<Ball> balls;
 	public static DodgeWindow[][] windows;
 	static Thread mainThread;
+	public static PlayerKeys keys;
 	
 	final static int resolution=1000;
 	final static int xWindows=5,yWindows=3;
@@ -32,6 +33,8 @@ public class MainClass {
 	 * Start the actual game, create the game windows
 	 */
 	public static void startGame() {
+		keys=new PlayerKeys();
+		
 		balls=new ArrayList<Ball>(startEnemies+1);
 		
 		balls.add(PlayerBall.player);
@@ -45,6 +48,7 @@ public class MainClass {
 		for(int i=0;i<xWindows;i++) {
 			for(int j=0;j<yWindows;j++) {
 				windows[i][j]=new DodgeWindow(i,j);
+				windows[i][j].addKeyListener(keys);
 			}
 		}
 		
@@ -62,7 +66,7 @@ public class MainClass {
 							windows[i][j].repaint();
 					
 					for(int i=0;i<balls.size();i++) {
-						balls.get(i).update(1000/30);
+						balls.get(i).update(1/30.0);
 					}
 				}
 			}
