@@ -25,7 +25,8 @@ public class MainClass {
 	public static void main(String[] args) {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
-		scale=Math.min(1.0*screenSize.getWidth()/resolution, 1.0*screenSize.getHeight()/resolution);
+		scale=Math.min(1.0*(screenSize.getWidth()-edgePaddingX*2)/resolution, 1.0*(screenSize.getHeight()-edgePaddingY*2)/resolution);
+		System.out.println("scale: "+scale);
 		startGame();	//ADD MENUS
 	}
 	

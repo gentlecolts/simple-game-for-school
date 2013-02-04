@@ -1,9 +1,11 @@
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.geom.Rectangle2D;
 
 import javax.swing.JFrame;
 
@@ -20,10 +22,11 @@ public class DodgeWindow extends JFrame {
 		xIndex=x;
 		yIndex=y;
 		
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		screenSize.setSize(screenSize.getWidth()-MainClass.edgePaddingX*2, screenSize.getHeight()-MainClass.edgePaddingY*2);
-		setSize((int)screenSize.getWidth()/MainClass.xWindows-MainClass.windowPaddingX,(int)screenSize.getHeight()/MainClass.yWindows-MainClass.windowPaddingY);
-		setLocation((int)screenSize.getWidth()*x/MainClass.xWindows+MainClass.edgePaddingX,(int)screenSize.getHeight()*y/MainClass.yWindows+MainClass.edgePaddingY);
+		pack();			//getInsets() only works after you call pack() or show for some reason... Goddammit Java
+		setSize((int)(MainClass.scale*MainClass.resolution/MainClass.yWindows-((x!=0 && x!=MainClass.xWindows-1) ? MainClass.windowPaddingX : MainClass.windowPaddingX/2)),
+				(int)((MainClass.scale*MainClass.resolution+getInsets().top)/MainClass.yWindows-((y!=0 && y!=MainClass.yWindows-1) ? MainClass.windowPaddingY : MainClass.windowPaddingY/2)));
+		setLocation((int)(MainClass.scale*MainClass.resolution/MainClass.yWindows*x+MainClass.edgePaddingX+((x!=0) ? MainClass.windowPaddingX/2 : 0)),
+				(int)((MainClass.scale*MainClass.resolution+getInsets().top)/MainClass.yWindows*y+MainClass.edgePaddingY+((y!=0) ? MainClass.windowPaddingY/2 : 0)-getInsets().top));
 		setResizable(false);
 		
 		setVisible(true);
@@ -55,6 +58,12 @@ public class DodgeWindow extends JFrame {
 				b.draw((Graphics2D)g, this);
 //			}
 		}
+		
+		g2.setColor(Color.BLACK);
+		g2.setStroke(new BasicStroke(30));
+		g2.draw(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX, 0-getLocationOnScreen().y+MainClass.edgePaddingY, 
+				MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale,
+				MainClass.resolution*MainClass.scale));
 	}
 	
 	/**

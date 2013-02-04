@@ -13,7 +13,7 @@ public class EnemyBall extends Ball {
 		super();
 		xPos=x;
 		yPos=y;
-		density=1;
+		density=10;
 		
 		radius=20;
 	}

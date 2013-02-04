@@ -16,6 +16,14 @@ public abstract class Ball {
 		idCount++;
 	}
 	
+	public double screenSpaceX() {
+		return xPos*MainClass.scale+MainClass.edgePaddingX;
+	}
+	
+	public double screenSpaceY() {
+		return yPos*MainClass.scale+MainClass.edgePaddingY;
+	}
+	
 	/**
 	 * Move the ball smoothly, check collisions
 	 * @param dt	the change in time so that movement isn't jerky
@@ -35,11 +43,11 @@ public abstract class Ball {
 			}
 		}
 		
-		if((xPos-radius)*MainClass.scale<MainClass.edgePaddingX || (xPos+radius)*MainClass.scale>MainClass.resolution) {
+		if(xPos-radius<0 || xPos+radius>MainClass.resolution*MainClass.xWindows/MainClass.yWindows) {
 			wallBounce(false);
 		}
 		
-		if((yPos-radius)*MainClass.scale<MainClass.edgePaddingY || (yPos+radius)*MainClass.scale>MainClass.resolution) {
+		if(yPos-radius<0 || yPos+radius>MainClass.resolution) {
 			wallBounce(true);
 		}
 	}
@@ -129,7 +137,7 @@ public abstract class Ball {
 	 * @param w the window
 	 */
 	public void draw(Graphics2D g, DodgeWindow w) {
-		double posInWindowX=xPos*MainClass.scale-w.getLocationOnScreen().x, posInWindowY=yPos*MainClass.scale-w.getLocationOnScreen().y;
+		double posInWindowX=screenSpaceX()-w.getLocationOnScreen().x, posInWindowY=screenSpaceY()-w.getLocationOnScreen().y;
 
 		draw(g,posInWindowX,posInWindowY);
 	}
