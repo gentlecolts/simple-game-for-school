@@ -34,6 +34,14 @@ public abstract class Ball {
 				bounce(MainClass.balls.get(i));
 			}
 		}
+		
+		if((xPos-radius)*MainClass.scale<MainClass.edgePaddingX || (xPos+radius)*MainClass.scale>MainClass.resolution) {
+			wallBounce(false);
+		}
+		
+		if((yPos-radius)*MainClass.scale<MainClass.edgePaddingY || (yPos+radius)*MainClass.scale>MainClass.resolution) {
+			wallBounce(true);
+		}
 	}
 	
 	/**
@@ -49,34 +57,36 @@ public abstract class Ball {
 	public void bounce(Ball b) {
 		//mv=mv
 		double dist=Math.sqrt(distSq(b));
+		
+		double unitNormalX=(b.xPos-xPos)/dist,unitNormalY=(b.yPos-yPos)/dist;		//make tangent and normal vecotrs
+		double unitTangentX=-unitNormalY,unitTangentY=unitNormalX;
+		
+		double normalVel1=xVel*unitNormalX+yVel*unitNormalY;
+		double normalVel2=b.xVel*unitNormalX+b.yVel*unitNormalY;
+		
+		double tangentVel1=xVel*unitTangentX+yVel*unitTangentY;
+		double tangentVel2=b.xVel*unitTangentX+b.yVel*unitTangentY;
+		
+		
+		double normalVel1Prime=(normalVel1*(mass()-b.mass())+2*b.mass()*normalVel2)/(mass()+b.mass());
+		double normalVel2Prime=(normalVel2*(b.mass()-mass())+2*mass()*normalVel1)/(mass()+b.mass());
+		
+		bounce(unitNormalX*normalVel1Prime+unitTangentX*tangentVel1,unitNormalY*normalVel1Prime+unitTangentY*tangentVel1);
+		b.bounce(unitNormalX*normalVel2Prime+unitTangentX*tangentVel2,unitNormalY*normalVel2Prime+unitTangentY*tangentVel2);
+		
 		double angle=Math.atan2(yPos-b.yPos, xPos-b.xPos);
 		double cosA=Math.cos(angle);
 		double sinA=Math.sin(angle);
 		
-		double rotXVel1=cosA*xVel+sinA*yVel;
-		double rotYVel1=cosA*yVel-sinA*xVel;
-		double rotXVel2=cosA*b.xVel+sinA*b.yVel;
-		double rotYVel2=cosA*b.yVel-sinA*b.xVel;
-		
-		double momentum=rotXVel1*mass()+rotXVel2*b.mass();
-		
-		double totVelX=xVel-b.xVel;
-		
-		rotXVel1=(momentum-b.mass()*totVelX)/(mass()+b.mass());
-		rotXVel2=totVelX+rotXVel1;
-		
-		bounce(b,rotXVel2,rotYVel2,sinA,cosA);
-		b.bounce(this,rotXVel1,rotXVel1,sinA,cosA);
-		
 		double diff=(radius+b.radius-dist)/2;
 		
 		double cosD=cosA*diff;
-		double sinD=cosD*diff;
+		double sinD=sinA*diff;
 		
-		xPos-=cosD;
-		yPos-=sinD;
-		b.xPos+=cosD;
-		b.yPos+=sinD;
+		xPos+=cosD;
+		yPos+=sinD;
+		b.xPos-=cosD;
+		b.yPos-=sinD;
 	}
 	
 	public double mass() {
@@ -84,14 +94,13 @@ public abstract class Ball {
 	}
 	
 	/**
-	 * Bounce off another ball
-	 * @param b
-	 * @param totVelX
-	 * @param totVelY
+	 * Bounce off another ball; this just sets velocity, but gives a hook for being overridden so player collision can damage health.
+	 * @param nXVel
+	 * @param nYVel
 	 */
-	public void bounce(Ball b, double rotXVel1, double rotYVel1, double sinA, double cosA) {
-		xVel=cosA*rotXVel1-sinA*rotYVel1;
-		yVel=cosA*rotYVel1+sinA*rotXVel1;
+	public void bounce(double nXVel, double nYVel) {
+		xVel=nXVel;
+		yVel=nYVel;
 	}
 	
 	/**
@@ -111,7 +120,7 @@ public abstract class Ball {
 	 * @return whether b and this collide
 	 */
 	public boolean collides(Ball b) {
-		return distSq(b)<radius*radius+b.radius*b.radius;
+		return distSq(b)<(radius+b.radius)*(radius+b.radius);
 	}
 	
 	/**
