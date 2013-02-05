@@ -5,15 +5,18 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 
-public class DodgeWindow extends JFrame {
+public class DodgeWindow extends JDialog {
 	int xIndex,yIndex;
 	int origX,origY;
+	boolean closedByGame=false;
 	
 	/**
 	 * Creates a window
@@ -33,6 +36,14 @@ public class DodgeWindow extends JFrame {
 		setLocation(origX,origY);
 		setResizable(false);
 		
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			public void windowClosed(WindowEvent e) {
+				System.out.println("CLosed!");
+				if(!closedByGame)
+					System.exit(0);
+			}
+		});
 		
 		setVisible(true);
 	}
@@ -95,6 +106,7 @@ public class DodgeWindow extends JFrame {
 	 * Close the window
 	 */
 	public void close() {
+		closedByGame=true;
         WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
         Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 	}
