@@ -31,9 +31,6 @@ public class EnemyBall extends Ball {
 			xAccel=sign*gravityAccel/dist*(player.xPos-xPos);
 			yAccel=sign*gravityAccel/dist*(player.yPos-yPos);
 		} else {
-//			xAccel=-(player.xPos-xPos)/1000000;
-//			yAccel=-(player.yPos-yPos)/1000000;
-			
 			xAccel=0;
 			yAccel=0;
 		}

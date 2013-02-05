@@ -16,12 +16,36 @@ public abstract class Ball {
 		idCount++;
 	}
 	
+	public static double cameraOffsetX() {
+		double offset=(-PlayerBall.player.xPos)*MainClass.scale+MainClass.screenWidth/2;
+		
+		if(offset>0)
+			offset=0;
+		
+		else if(offset+MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale<MainClass.screenWidth)
+			offset=MainClass.screenWidth-MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale;
+		
+		return offset;
+	}
+	
+	public static double cameraOffsetY() {
+		double offset=(-PlayerBall.player.yPos)*MainClass.scale+MainClass.screenHeight/2;
+		
+		if(offset>0)
+			offset=0;
+		
+		else if(offset+MainClass.resolution*MainClass.scale<MainClass.screenHeight)
+			offset=MainClass.screenHeight-MainClass.resolution*MainClass.scale;
+		
+		return offset;
+	}
+	
 	public double screenSpaceX() {
-		return xPos*MainClass.scale+MainClass.edgePaddingX;
+		return xPos*MainClass.scale+MainClass.edgePaddingX+cameraOffsetX();
 	}
 	
 	public double screenSpaceY() {
-		return yPos*MainClass.scale+MainClass.edgePaddingY;
+		return yPos*MainClass.scale+MainClass.edgePaddingY+cameraOffsetY();
 	}
 	
 	/**
@@ -43,11 +67,11 @@ public abstract class Ball {
 			}
 		}
 		
-		if(xPos-radius<0 || xPos+radius>MainClass.resolution*MainClass.xWindows/MainClass.yWindows) {
+		if(xPos-radius<MainClass.wallThickness/2*MainClass.scale || xPos+radius>MainClass.resolution*MainClass.xWindows/MainClass.yWindows-MainClass.wallThickness/2*MainClass.scale) {
 			wallBounce(false);
 		}
 		
-		if(yPos-radius<0 || yPos+radius>MainClass.resolution) {
+		if(yPos-radius<MainClass.wallThickness/2*MainClass.scale || yPos+radius>MainClass.resolution-MainClass.wallThickness/2*MainClass.scale) {
 			wallBounce(true);
 		}
 	}

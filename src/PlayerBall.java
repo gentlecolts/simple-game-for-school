@@ -16,7 +16,7 @@ public class PlayerBall extends Ball {
 	 */
 	private PlayerBall() {
 		super();
-		xPos=MainClass.resolution/2;
+		xPos=MainClass.resolution/2*MainClass.xWindows/MainClass.yWindows;
 		yPos=MainClass.resolution/2;
 		
 		density=100;

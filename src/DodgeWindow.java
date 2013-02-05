@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 
 import javax.swing.JFrame;
@@ -45,23 +46,12 @@ public class DodgeWindow extends JFrame {
 		
 		for(int i=0;i<MainClass.balls.size();i++) {
 			Ball b=MainClass.balls.get(i);
-//			System.out.println("ball location: "+(int)(b.xPos*MainClass.scale)+","+(int)(b.yPos*MainClass.scale));
-//			System.out.println("position: "+getLocationOnScreen().x+","+getLocationOnScreen().y);
-//			System.out.println(""+(b.xPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().x)+","+
-//					(b.xPos*MainClass.scale-b.radius*MainClass.scale<getLocationOnScreen().x+getWidth())+","+
-//					(b.yPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().y)+","+
-//					(b.yPos*MainClass.scale+b.radius*MainClass.scale<getLocationOnScreen().y+getHeight()));
-//			if(b.xPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().x
-//					&& b.xPos*MainClass.scale-b.radius*MainClass.scale<getLocationOnScreen().x+getWidth()
-//					&& b.yPos*MainClass.scale+b.radius*MainClass.scale>getLocationOnScreen().y
-//					&& b.yPos*MainClass.scale+b.radius*MainClass.scale<getLocationOnScreen().y+getHeight()) {
-				b.draw((Graphics2D)g, this);
-//			}
+			b.draw((Graphics2D)g, this);
 		}
 		
 		g2.setColor(Color.BLACK);
-		g2.setStroke(new BasicStroke(30));
-		g2.draw(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX, 0-getLocationOnScreen().y+MainClass.edgePaddingY, 
+		g2.setStroke(new BasicStroke(MainClass.wallThickness));
+		g2.draw(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX+Ball.cameraOffsetX(), 0-getLocationOnScreen().y+MainClass.edgePaddingY+Ball.cameraOffsetY(), 
 				MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale,
 				MainClass.resolution*MainClass.scale));
 	}
@@ -70,7 +60,8 @@ public class DodgeWindow extends JFrame {
 	 * Close the window
 	 */
 	public void close() {
-		
+        WindowEvent wev = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
+        Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
 	}
 	
 }
