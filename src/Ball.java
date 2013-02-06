@@ -10,10 +10,12 @@ public abstract class Ball {
 	public double density;
 	public int id;
 	static int idCount=0;
+	Color col;
 	
 	public Ball() {
 		id=idCount;
 		idCount++;
+		col=Color.black;
 	}
 	
 	public static double cameraOffsetX() {
@@ -61,9 +63,11 @@ public abstract class Ball {
 		
 		setAccel(dt);
 		
+		Ball b=null;
 		for(int i=0;i<MainClass.balls.size();i++) {
-			if(id<MainClass.balls.get(i).id && collides(MainClass.balls.get(i))) {
-				bounce(MainClass.balls.get(i));
+			b=MainClass.balls.get(i);
+			if(b!=null && id<b.id && collides(b)) {
+				bounce(b);
 			}
 		}
 		
@@ -88,7 +92,8 @@ public abstract class Ball {
 	 */
 	public void bounce(Ball b) {
 		//mv=mv
-		double dist=Math.sqrt(distSq(b));
+		//double dist=Math.sqrt(distSq(b));
+		double dist=1/invsqrt(distSq(b));
 		
 		double unitNormalX=(b.xPos-xPos)/dist,unitNormalY=(b.yPos-yPos)/dist;		//make tangent and normal vecotrs
 		double unitTangentX=-unitNormalY,unitTangentY=unitNormalX;
@@ -173,13 +178,25 @@ public abstract class Ball {
 	 * @param posInWindowY	position y
 	 */
 	public void draw(Graphics2D g, double posInWindowX, double posInWindowY) {
-		g.setColor(new Color(0,0,0));
+		g.setColor(col);
 		
 		g.fill(new Ellipse2D.Double(posInWindowX-radius*MainClass.scale,posInWindowY-radius*MainClass.scale,radius*2*MainClass.scale,radius*2*MainClass.scale));
 	}
 	
 	public double distSq(Ball o) {
 		return (o.xPos-xPos)*(o.xPos-xPos)+(o.yPos-yPos)*(o.yPos-yPos);
+	}
+	
+	//fuk da police
+	double invsqrt(double x){
+		//if(x==Double.POSITIVE_INFINITY)return 0;
+		double xhalf = 0.5d*x;
+		long i = Double.doubleToLongBits(x);
+		i = 0x5fe6ec85e7de30daL - (i>>1);
+		x = Double.longBitsToDouble(i);
+		x *=(1.5d - xhalf*x*x);
+		x *=(1.5d - xhalf*x*x);
+		return x;
 	}
 	
 }

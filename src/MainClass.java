@@ -28,9 +28,14 @@ public class MainClass {
 	
 	/**
 	 * Start everything, create the topBarWindow
-	 * @param args
+	 * @param args even though its stupid to mention b/c java's main can only have
+	 * that stupid args variable, no more no less
+	 * @see my
+	 * @$$
+	 * @throws money
+	 * @deprecated
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws money{
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		
 		screenWidth=(int)Math.min(screenSize.getWidth()-edgePaddingX*2, (screenSize.getHeight()-edgePaddingY*2)/yWindows*xWindows);
@@ -40,7 +45,7 @@ public class MainClass {
 		startScale=scale;
 		
 		menu=new JFrame();
-		
+		menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JButton button=new JButton("Start!");
 		button.addActionListener(new ActionListener(){
 
@@ -74,6 +79,8 @@ public class MainClass {
 		
 		balls=new ArrayList<Ball>(startEnemies+1);
 		
+		
+		PlayerBall.player=new PlayerBall();
 		balls.add(PlayerBall.player);
 		
 		for(int i=0;i<startEnemies;i++) {
@@ -106,8 +113,9 @@ public class MainClass {
 				lastLevelTime=System.currentTimeMillis();
 				startTime=lastLevelTime;
 				
-				while(true) {
+				while(gameRunning) {
 					try {
+						//Thread.sleep(1000/30);
 						Thread.sleep(1000/30);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
@@ -119,8 +127,16 @@ public class MainClass {
 						}
 					}
 					
+					Ball b=null;
 					for(int i=0;i<balls.size();i++) {
-						balls.get(i).update(1/30.0);
+						b=balls.get(i);
+						if(b!=null){
+							b.update(1/30.0);
+						}
+					}
+					
+					if(System.currentTimeMillis()>lastLevelTime+5000){
+						addBall();
 					}
 					
 					if(System.currentTimeMillis()>lastLevelTime+30000) {
@@ -134,10 +150,46 @@ public class MainClass {
 		
 		mainThread.start();
 	}
+	class money extends Throwable{
+		private static final long serialVersionUID = 1L;
+	}
+	
+	public static void addBall(){
+		Random rnd=new Random();
+		balls.add(
+				new EnemyBall(
+						rnd.nextDouble()*resolution,
+						rnd.nextDouble()*resolution
+				)
+		);
+		switch(rnd.nextInt(5)){
+		case 0:
+			break;
+		case 1:
+		case 2:
+			balls.add(
+					new SplitterBall(
+							rnd.nextDouble()%topBarWindow.getWidth(),
+							rnd.nextDouble()%(yWindows*windows[0][0].getHeight())
+					)
+			);
+			break;
+		case 3:
+		case 4:
+			balls.add(
+					new AbsorbBall(
+							rnd.nextDouble()%topBarWindow.getWidth(),
+							rnd.nextDouble()%(yWindows*windows[0][0].getHeight())
+					)
+			);
+		}
+	}
 	
 	public static void levelUp() {
 		level++;
 		lastLevelTime=System.currentTimeMillis();
+		
+		PlayerBall.player.hp=Math.min(PlayerBall.player.hp+1, 3);
 		
 		windows[(int) (Math.random()*windows.length)][(int) (Math.random()*windows[0].length)].close();
 	}
@@ -159,12 +211,13 @@ public class MainClass {
 			}
 		}
 		
+		topBarWindow.dispose();
+		
 		menu=new JFrame();
+		menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		menu.add(new JLabel("Score: "+score),BorderLayout.NORTH);
 		JButton button=new JButton("Play again!");
 		button.addActionListener(new ActionListener(){
-
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(!gameRunning)
 					startGame();

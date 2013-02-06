@@ -16,6 +16,7 @@ public class EnemyBall extends Ball {
 		density=10;
 		
 		radius=20;
+		col=Color.blue;
 	}
 	
 	@Override
@@ -27,7 +28,8 @@ public class EnemyBall extends Ball {
 			double distSq=distSq(player);
 			gravityAccel/=distSq;
 			
-			double dist=Math.sqrt(distSq);
+			//double dist=Math.sqrt(distSq);
+			double dist=1/invsqrt(distSq);
 			xAccel=sign*gravityAccel/dist*(player.xPos-xPos);
 			yAccel=sign*gravityAccel/dist*(player.yPos-yPos);
 		} else {
@@ -38,7 +40,7 @@ public class EnemyBall extends Ball {
 	
 	@Override
 	public void draw(Graphics2D g, double posInWindowX, double posInWindowY) {
-		g.setColor(Color.BLACK);
+		g.setColor(col);
 		if(destroyCounter>0) {
 			g.setColor(new Color(0,0,0,255-destroyCounter));
 			

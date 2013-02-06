@@ -58,7 +58,7 @@ public class DodgeWindow extends JDialog {
 		
 		Graphics2D g2=(Graphics2D)g;
 		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+		g2.setRenderingHint(RenderingHints.KEY_RENDERING,RenderingHints.VALUE_RENDER_SPEED);
 		
 		g2.setColor(new Color(30,30,30));
 		g2.setStroke(new BasicStroke(3));
@@ -75,9 +75,12 @@ public class DodgeWindow extends JDialog {
 			g2.drawLine(0, (int)(y), getWidth(), (int)(y));
 		}
 		
+		Ball b=null;
 		for(int i=0;i<MainClass.balls.size();i++) {
-			Ball b=MainClass.balls.get(i);
-			b.draw((Graphics2D)g, this);
+			b=MainClass.balls.get(i);
+			if(b!=null){
+				b.draw((Graphics2D)g, this);
+			}
 		}
 		
 		g2.setColor(Color.BLACK);
@@ -106,11 +109,12 @@ public class DodgeWindow extends JDialog {
 			g2.fill(new Rectangle2D.Double(leftX, topY+MainClass.resolution*MainClass.scale, drawWidth, d.getHeight()-(topY+MainClass.resolution*MainClass.scale)));
 		}
 		
+		/*
 		if(getLocationOnScreen().x+getWidth()-MainClass.edgePaddingX>MainClass.xResolution()*MainClass.scale-100 && getLocationOnScreen().y-MainClass.edgePaddingY<100) {
 			g2.setColor(Color.red);
 			g2.drawString("Score: "+(int)(System.currentTimeMillis()-MainClass.startTime),(int)(MainClass.xResolution()*MainClass.scale-100-getLocationOnScreen().x+MainClass.edgePaddingX),
 					100-getLocationOnScreen().y+MainClass.edgePaddingY);
-		}
+		}//*/
 		
 	}
 	
