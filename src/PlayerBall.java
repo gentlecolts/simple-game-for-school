@@ -49,8 +49,13 @@ public class PlayerBall extends Ball {
 	public void bounce(Ball b, double nXVel, double nYVel) {
 		super.bounce(b, nXVel, nYVel);
 		
-		if(((EnemyBall)b).destroyCounter==0)
+		if(((EnemyBall)b).destroyCounter==0) {
 			hp--;
+			if(hp<0) {
+				MainClass.gameOver();
+			}
+		}
+	
 	}
 	
 	@Override

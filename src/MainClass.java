@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.*;
 import javax.swing.*;
 
@@ -19,12 +21,13 @@ public class MainClass {
 	static int screenWidth,screenHeight;
 	
 	final static int startEnemies=4;
-	static int level=0;
+	static int level=0, score=0;
 	
-	static JFrame menu;
+	static JFrame topBarWindow, menu;
+	static boolean gameRunning=false;
 	
 	/**
-	 * Start everything, create the menu
+	 * Start everything, create the topBarWindow
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -35,7 +38,25 @@ public class MainClass {
 		
 		scale=Math.min(1.0*screenWidth/resolution, 1.0*screenHeight/resolution);
 		startScale=scale;
-		startGame();	//ADD MENUS
+		
+		menu=new JFrame();
+		
+		JButton button=new JButton("Start!");
+		button.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!gameRunning)
+					startGame();
+			}
+		});
+		menu.add(button);
+		
+		menu.pack();
+		menu.setVisible(true);
+		
+		
+		//startGame();	//ADD MENUS
 	}
 	
 	public static double xResolution() {
@@ -46,6 +67,9 @@ public class MainClass {
 	 * Start the actual game, create the game windows
 	 */
 	public static void startGame() {
+		gameRunning=true;
+		menu.setVisible(false);
+		
 		keys=new PlayerKeys();
 		
 		balls=new ArrayList<Ball>(startEnemies+1);
@@ -65,16 +89,17 @@ public class MainClass {
 			}
 		}
 		
-		menu=new JFrame();
-		menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		menu.setSize((windows[0][0].getWidth()+windowPaddingX/2+2)*windows.length,0);
+		topBarWindow=new JFrame();
+		topBarWindow.setFocusable(true);
+		topBarWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		topBarWindow.setSize((windows[0][0].getWidth()+windowPaddingX/2+2)*windows.length,0);
 		Point tmp=windows[0][0].getLocationOnScreen();
 		tmp.y-=44;
 		tmp.x-=5;
-		menu.setLocation(tmp);
-		menu.addKeyListener(keys);
-		menu.requestFocus();
-		menu.setVisible(true);
+		topBarWindow.setLocation(tmp);
+		//topBarWindow.addKeyListener(keys);
+		topBarWindow.requestFocus();
+		topBarWindow.setVisible(true);
 		
 		mainThread=new Thread(new Runnable(){
 			public void run() {
@@ -118,10 +143,37 @@ public class MainClass {
 	}
 
 	/**
-	 * Recreate the menu, close extra windows
+	 * Recreate the topBarWindow, close extra windows
 	 */
 	public static void gameOver() {
+		gameRunning=false;
+		for(int i=0;i<xWindows;i++) {
+			for(int j=0;j<yWindows;j++) {
+				windows[i][j].close();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		
+		menu=new JFrame();
+		menu.add(new JLabel("Score: "+score),BorderLayout.NORTH);
+		JButton button=new JButton("Play again!");
+		button.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(!gameRunning)
+					startGame();
+			}
+		});
+		menu.add(button);
+		
+		menu.pack();
+		menu.setVisible(true);
 	}
 	
 }

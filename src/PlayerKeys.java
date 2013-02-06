@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.event.*;
 import java.util.concurrent.atomic.*;
 /**
@@ -18,11 +19,11 @@ public class PlayerKeys implements KeyListener{
 	//all four are pressed to allow 
 	//TODO determine if these should be bool or long, will need long to have acceleration
 	//TODO are these being accesed elsewhere? if not they can be private longs instead
-	AtomicBoolean
-		lDown=new AtomicBoolean(false),
-		rDown=new AtomicBoolean(false),
-		uDown=new AtomicBoolean(false),
-		dDown=new AtomicBoolean(false);
+	AtomicInteger
+		rDown=new AtomicInteger(0),
+		uDown=new AtomicInteger(0),
+		dDown=new AtomicInteger(0),
+		lDown=new AtomicInteger(0);
 	
 	//TODO vk is non numpad, is this an issue?
 	static final int
@@ -42,26 +43,47 @@ public class PlayerKeys implements KeyListener{
 		y=new AtomicInteger(y0);
 		xdub=x0;
 		ydub=y0;
+		
+		EventQueue ev = Toolkit.getDefaultToolkit().getSystemEventQueue();
+		// MyCustomEventQueue extends EventQueue and processes keyboard events in the dispatch
+		ev.push(new EventQueue(){
+			protected void dispatchEvent(AWTEvent event)  {
+				super.dispatchEvent(event);
+			       // all AWTEvents can be indentified by type, KeyEvent, MouseEvent, etc
+			       // look for KeyEvents and match against you hotkeys / callbacks
+				if(event instanceof KeyEvent) {
+					KeyEvent keyEvent=(KeyEvent)event;
+					
+					if(keyEvent.getID()==KeyEvent.KEY_PRESSED) {
+						keyPressed(keyEvent);
+					} else if(keyEvent.getID()==KeyEvent.KEY_RELEASED); {
+						keyReleased(keyEvent);
+					}
+				}
+			}
+		});
+
 	}
 
 	
 	double getXAccel(){
 		double accel=0;
-		if(rDown.get()) {
+		if(rDown.get()>0) {
 			accel+=100;
 		}
-		if(lDown.get()) {
+		if(lDown.get()>0) {
 			accel-=100;
 		}
+		//System.out.println("lDown: "+lDown);
 		return accel;
 	}
 
 	double getYAccel(){
 		double accel=0;
-		if(uDown.get()) {
+		if(uDown.get()>0) {
 			accel-=100;
 		}
-		if(dDown.get()) {
+		if(dDown.get()>0) {
 			accel+=100;
 		}
 		
@@ -73,19 +95,20 @@ public class PlayerKeys implements KeyListener{
 		switch(arg0.getKeyCode()){
 		case left:
 		case a:
-			lDown.set(true);
+			lDown.set(2);
+			//System.out.println("++++++++++++++++++++++++lDown: "+lDown);
 			break;
 		case right:
 		case d:
-			rDown.set(true);
+			rDown.set(2);
 			break;
 		case up:
 		case w:
-			uDown.set(true);
+			uDown.set(2);
 			break;
 		case down:
 		case s:
-			dDown.set(true);
+			dDown.set(2);
 			break;
 		}
 	}
@@ -95,19 +118,20 @@ public class PlayerKeys implements KeyListener{
 		switch(arg0.getKeyCode()){
 		case left:
 		case a:
-			lDown.set(false);
+			lDown.set(lDown.get()-1);
+			//System.out.println("-----------------------lDown: "+lDown);
 			break;
 		case right:
 		case d:
-			rDown.set(false);
+			rDown.set(rDown.get()-1);
 			break;
 		case up:
 		case w:
-			uDown.set(false);
+			uDown.set(uDown.get()-1);
 			break;
 		case down:
 		case s:
-			dDown.set(false);
+			dDown.set(dDown.get()-1);
 			break;
 		}
 	}

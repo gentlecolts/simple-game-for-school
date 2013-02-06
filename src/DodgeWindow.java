@@ -35,10 +35,13 @@ public class DodgeWindow extends JDialog {
 					System.exit(0);
 			}
 		});
+		setFocusable(false);
 
 		this.addWindowFocusListener(new WindowFocusListener(){
 			public void windowGainedFocus(WindowEvent e) {
-				MainClass.menu.requestFocus();
+				if(MainClass.topBarWindow!=null) {
+					MainClass.topBarWindow.requestFocus();
+				}
 			}
 			public void windowLostFocus(WindowEvent e) {}
 		});
