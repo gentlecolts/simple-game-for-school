@@ -1,9 +1,6 @@
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.util.ArrayList;
-
-import javax.swing.JDialog;
-
+import java.awt.*;
+import java.util.*;
+import javax.swing.*;
 
 public class MainClass {
 
@@ -23,6 +20,8 @@ public class MainClass {
 	
 	final static int startEnemies=4;
 	static int level=0;
+	
+	static JFrame menu;
 	
 	/**
 	 * Start everything, create the menu
@@ -62,9 +61,20 @@ public class MainClass {
 		for(int i=0;i<xWindows;i++) {
 			for(int j=0;j<yWindows;j++) {
 				windows[i][j]=new DodgeWindow(i,j);
-				windows[i][j].addKeyListener(keys);
+				//windows[i][j].addKeyListener(keys);
 			}
 		}
+		
+		menu=new JFrame();
+		menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		menu.setSize((windows[0][0].getWidth()+windowPaddingX/2+2)*windows.length,0);
+		Point tmp=windows[0][0].getLocationOnScreen();
+		tmp.y-=44;
+		tmp.x-=5;
+		menu.setLocation(tmp);
+		menu.addKeyListener(keys);
+		menu.requestFocus();
+		menu.setVisible(true);
 		
 		mainThread=new Thread(new Runnable(){
 			public void run() {
@@ -78,9 +88,11 @@ public class MainClass {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-					for(int i=0;i<xWindows;i++) 
-						for(int j=0;j<yWindows;j++)
+					for(int i=0;i<xWindows;i++) {
+						for(int j=0;j<yWindows;j++){
 							windows[i][j].repaint();
+						}
+					}
 					
 					for(int i=0;i<balls.size();i++) {
 						balls.get(i).update(1/30.0);

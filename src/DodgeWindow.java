@@ -1,16 +1,7 @@
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.geom.Rectangle2D;
-
-import javax.swing.JDialog;
-import javax.swing.JFrame;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import javax.swing.*;
 
 
 public class DodgeWindow extends JDialog {
@@ -44,7 +35,13 @@ public class DodgeWindow extends JDialog {
 					System.exit(0);
 			}
 		});
-		
+
+		this.addWindowFocusListener(new WindowFocusListener(){
+			public void windowGainedFocus(WindowEvent e) {
+				MainClass.menu.requestFocus();
+			}
+			public void windowLostFocus(WindowEvent e) {}
+		});
 		setVisible(true);
 	}
 	
