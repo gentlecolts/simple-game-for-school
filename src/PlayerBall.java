@@ -83,7 +83,8 @@ public class PlayerBall extends Ball {
 				240,120,hp>0 ? Arc2D.PIE : Arc2D.CHORD));
 		
 		MainClass.score=(int)(System.currentTimeMillis()-MainClass.startTime);
-		MainClass.topBarWindow.setTitle("Score: "+MainClass.score);
+		if(MainClass.topBarWindow!=null);
+			MainClass.topBarWindow.setTitle("Score: "+MainClass.score);
 		//g2.drawString("Score: "+MainClass.score,(int)(MainClass.xResolution()*MainClass.scale-100-getLocationOnScreen().x+MainClass.edgePaddingX),100-getLocationOnScreen().y+MainClass.edgePaddingY);
 	}
 	

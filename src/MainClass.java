@@ -135,7 +135,7 @@ public class MainClass {
 						}
 					}
 					
-					if(System.currentTimeMillis()>lastLevelTime+5000){
+					if(System.currentTimeMillis()<lastLevelTime+100){
 						addBall();
 					}
 					
@@ -158,7 +158,7 @@ public class MainClass {
 		Random rnd=new Random();
 		balls.add(
 				new EnemyBall(
-						rnd.nextDouble()*resolution,
+						rnd.nextDouble()*xResolution(),
 						rnd.nextDouble()*resolution
 				)
 		);
