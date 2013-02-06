@@ -64,13 +64,13 @@ public class DodgeWindow extends JDialog {
 		g2.setStroke(new BasicStroke(3));
 		for(int i=-getWidth();i<getWidth()*2;i+=(MainClass.screenWidth-MainClass.wallThickness)/(4*MainClass.xWindows)) {
 			double x=i+Ball.cameraOffsetX() % ((MainClass.screenWidth-MainClass.wallThickness)/(4*MainClass.xWindows))
-					-(getLocationOnScreen().x-origX) % getWidth();
+					-(getLocationOnScreen().x-origX) % (getWidth()+MainClass.windowPaddingX/2)-MainClass.windowPaddingX/2*xIndex;
 					
 			g2.drawLine((int)(x), 0, (int)x, getHeight());
 		}
 		for(int j=-getHeight();j<getHeight()*2;j+=(MainClass.screenHeight-MainClass.wallThickness)/(4*MainClass.yWindows)) {
 			double y=j+Ball.cameraOffsetY() % ((MainClass.screenHeight-MainClass.wallThickness)/(4*MainClass.yWindows))
-					-(getLocationOnScreen().y-origY) % getHeight();
+					-(getLocationOnScreen().y-origY) % (getHeight()+MainClass.windowPaddingY/2)-MainClass.windowPaddingY/2*yIndex;
 			
 			g2.drawLine(0, (int)(y), getWidth(), (int)(y));
 		}
@@ -82,24 +82,36 @@ public class DodgeWindow extends JDialog {
 		
 		g2.setColor(Color.BLACK);
 		g2.setStroke(new BasicStroke(MainClass.wallThickness));
-		g2.draw(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX+Ball.cameraOffsetX(), 0-getLocationOnScreen().y+MainClass.edgePaddingY+Ball.cameraOffsetY(), 
-				MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale,
-				MainClass.resolution*MainClass.scale));
+		
+		double leftX=-getLocationOnScreen().x+MainClass.edgePaddingX+Ball.cameraOffsetX();
+		double topY=-getLocationOnScreen().y+MainClass.edgePaddingY+Ball.cameraOffsetY();
+		double drawWidth=MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale;
+		double drawHeight=MainClass.resolution*MainClass.scale;
+				
+		g2.draw(new Rectangle2D.Double(leftX, topY, drawWidth, drawHeight));
 		
 		
 		if(getLocationOnScreen().x!=origX || getLocationOnScreen().y!=origY) {
+			Dimension d=Toolkit.getDefaultToolkit().getScreenSize();
+			
 			g2.setColor(Color.white);
-			g2.fill(new Rectangle2D.Double(0-getLocationOnScreen().x+Ball.cameraOffsetX(), 0-getLocationOnScreen().y+Ball.cameraOffsetY(),
-					MainClass.edgePaddingX, MainClass.resolution*MainClass.scale+MainClass.edgePaddingY*2));
-			g2.fill(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX+Ball.cameraOffsetX(), 0-getLocationOnScreen().y+Ball.cameraOffsetY(),
-					MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale, MainClass.edgePaddingY));
-			g2.fill(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX+Ball.cameraOffsetX()+MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale,
-					0-getLocationOnScreen().y+Ball.cameraOffsetY(),
-					MainClass.edgePaddingX, MainClass.resolution*MainClass.scale+MainClass.edgePaddingY*2));
-			g2.fill(new Rectangle2D.Double(0-getLocationOnScreen().x+MainClass.edgePaddingX+Ball.cameraOffsetX(),
-					0-getLocationOnScreen().y+Ball.cameraOffsetY()+MainClass.resolution*MainClass.scale+MainClass.edgePaddingY,
-					MainClass.resolution*MainClass.xWindows/MainClass.yWindows*MainClass.scale, MainClass.edgePaddingY));
+			g2.fill(new Rectangle2D.Double(leftX-MainClass.edgePaddingX, topY-MainClass.edgePaddingY,
+					MainClass.edgePaddingX, drawHeight+MainClass.edgePaddingY*2));
+			g2.fill(new Rectangle2D.Double(leftX, topY-MainClass.edgePaddingY,
+					drawWidth, MainClass.edgePaddingY));
+			g2.fill(new Rectangle2D.Double(leftX+MainClass.xResolution()*MainClass.scale,
+					topY-MainClass.edgePaddingY,
+					d.getWidth()-(leftX+MainClass.xResolution()*MainClass.scale), 
+					drawHeight+MainClass.edgePaddingY*2));
+			g2.fill(new Rectangle2D.Double(leftX, topY+MainClass.resolution*MainClass.scale, drawWidth, d.getHeight()-(topY+MainClass.resolution*MainClass.scale)));
 		}
+		
+		if(getLocationOnScreen().x+getWidth()-MainClass.edgePaddingX>MainClass.xResolution()*MainClass.scale-100 && getLocationOnScreen().y-MainClass.edgePaddingY<100) {
+			g2.setColor(Color.red);
+			g2.drawString("Score: "+(int)(System.currentTimeMillis()-MainClass.startTime),(int)(MainClass.xResolution()*MainClass.scale-100-getLocationOnScreen().x+MainClass.edgePaddingX),
+					100-getLocationOnScreen().y+MainClass.edgePaddingY);
+		}
+		
 	}
 	
 	/**

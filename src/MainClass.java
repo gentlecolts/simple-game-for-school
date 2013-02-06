@@ -12,7 +12,7 @@ public class MainClass {
 	public static DodgeWindow[][] windows;
 	static Thread mainThread;
 	public static PlayerKeys keys;
-	static long startTime;
+	static long lastLevelTime, startTime;
 	
 	final static int resolution=1000;
 	final static int xWindows=5,yWindows=3;
@@ -36,8 +36,11 @@ public class MainClass {
 		
 		scale=Math.min(1.0*screenWidth/resolution, 1.0*screenHeight/resolution);
 		startScale=scale;
-		System.out.println("scale: "+scale);
 		startGame();	//ADD MENUS
+	}
+	
+	public static double xResolution() {
+		return resolution*xWindows/yWindows;
 	}
 	
 	/**
@@ -65,6 +68,9 @@ public class MainClass {
 		
 		mainThread=new Thread(new Runnable(){
 			public void run() {
+				lastLevelTime=System.currentTimeMillis();
+				startTime=lastLevelTime;
+				
 				while(true) {
 					try {
 						Thread.sleep(1000/30);
@@ -80,22 +86,21 @@ public class MainClass {
 						balls.get(i).update(1/30.0);
 					}
 					
-					if(System.currentTimeMillis()>startTime+30000) {
+					if(System.currentTimeMillis()>lastLevelTime+30000) {
 						levelUp();
-						System.out.println("LEVEL UP!");
-						startTime=System.currentTimeMillis();
+					} else if(System.currentTimeMillis()<lastLevelTime+300 && level!=0) {
+						scale*=1+(.1/(1000/30));
 					}
 				}
 			}
 		});
 		
-		startTime=System.currentTimeMillis();
 		mainThread.start();
 	}
 	
 	public static void levelUp() {
 		level++;
-		scale*=1.1;
+		lastLevelTime=System.currentTimeMillis();
 		
 		windows[(int) (Math.random()*windows.length)][(int) (Math.random()*windows[0].length)].close();
 	}
