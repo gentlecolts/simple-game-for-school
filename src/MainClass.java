@@ -21,7 +21,7 @@ public class MainClass {
 	static int screenWidth,screenHeight;
 	
 	final static int startEnemies=4;
-	static int level=0, score=0;
+	static int level, score=0;
 	
 	static JFrame topBarWindow, menu;
 	static boolean gameRunning=false;
@@ -40,9 +40,6 @@ public class MainClass {
 		
 		screenWidth=(int)Math.min(screenSize.getWidth()-edgePaddingX*2, (screenSize.getHeight()-edgePaddingY*2)/yWindows*xWindows);
 		screenHeight=(int)Math.min(screenSize.getHeight()-edgePaddingY*2, (screenSize.getWidth()-edgePaddingX*2)/xWindows*yWindows);
-		
-		scale=Math.min(1.0*screenWidth/resolution, 1.0*screenHeight/resolution);
-		startScale=scale;
 		
 		menu=new JFrame();
 		menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -74,6 +71,9 @@ public class MainClass {
 	 * Start the actual game, create the game windows
 	 */
 	public static void startGame() {
+		level=0;
+		scale=Math.min(1.0*screenWidth/resolution, 1.0*screenHeight/resolution);
+		startScale=scale;
 		gameRunning=true;
 		menu.setVisible(false);
 		
