@@ -7,12 +7,6 @@ import java.util.concurrent.atomic.*;
  * 
  */
 public class PlayerKeys implements KeyListener{
-	//no atomic floating point data types in java
-	//see http://stackoverflow.com/questions/5505460
-	//FIXME: is y=0 on the top or bottom of the screen?
-	AtomicInteger x,y;
-	//PlayerBall player //TODO will do this iff you ask and make the x and y in PB atomic
-	private double xdub,ydub;
 	
 	//these store the time the player started going in a direction
 	//they will allow acceleration and/or floating point coords
@@ -39,18 +33,12 @@ public class PlayerKeys implements KeyListener{
 		this(0,0);
 	}
 	public PlayerKeys(int x0,int y0){
-		x=new AtomicInteger(x0);
-		y=new AtomicInteger(y0);
-		xdub=x0;
-		ydub=y0;
-		
 		EventQueue ev = Toolkit.getDefaultToolkit().getSystemEventQueue();
-		// MyCustomEventQueue extends EventQueue and processes keyboard events in the dispatch
+		// Override EventQueue so that the keylistener is focus-agnostic
 		ev.push(new EventQueue(){
 			protected void dispatchEvent(AWTEvent event)  {
 				super.dispatchEvent(event);
-			       // all AWTEvents can be indentified by type, KeyEvent, MouseEvent, etc
-			       // look for KeyEvents and match against you hotkeys / callbacks
+			       // all AWTEvents can be identified by type, KeyEvent, MouseEvent, etc
 				if(event instanceof KeyEvent) {
 					KeyEvent keyEvent=(KeyEvent)event;
 					
@@ -65,7 +53,9 @@ public class PlayerKeys implements KeyListener{
 
 	}
 
-	
+	/** Get what the horizontal acceleration of the player should be
+	 * @return the x acceleration
+	 */
 	double getXAccel(){
 		double accel=0;
 		if(rDown.get()>0) {
@@ -74,10 +64,12 @@ public class PlayerKeys implements KeyListener{
 		if(lDown.get()>0) {
 			accel-=100;
 		}
-		//System.out.println("lDown: "+lDown);
 		return accel;
 	}
 
+	/** Get what the vertical acceleration of the player should be
+	 * @return the y acceleration
+	 */
 	double getYAccel(){
 		double accel=0;
 		if(uDown.get()>0) {
@@ -96,7 +88,6 @@ public class PlayerKeys implements KeyListener{
 		case left:
 		case a:
 			lDown.set(2);
-			//System.out.println("++++++++++++++++++++++++lDown: "+lDown);
 			break;
 		case right:
 		case d:
@@ -119,7 +110,6 @@ public class PlayerKeys implements KeyListener{
 		case left:
 		case a:
 			lDown.set(lDown.get()-1);
-			//System.out.println("-----------------------lDown: "+lDown);
 			break;
 		case right:
 		case d:

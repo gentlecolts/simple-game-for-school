@@ -7,7 +7,8 @@ import java.awt.geom.Ellipse2D;
 public class PlayerBall extends Ball {
 	static PlayerBall player=new PlayerBall();		//so that the camera knows what to follow
 	
-	int hp=3;
+	static final int maxHP=6;
+	int hp=maxHP;
 	
 	final double velCap=100;
 	
@@ -33,17 +34,9 @@ public class PlayerBall extends Ball {
 			xAccel=-Math.signum(xVel)*50;
 		}
 		
-		/*if(Math.abs(xVel)>=velCap) {
-			xAccel=velCap-xVel;
-		}*/
-		
 		if(yAccel==0) {
 			yAccel=-Math.signum(yVel)*50;
 		}
-		
-		/*if(Math.abs(yVel)>=velCap) {
-			yAccel=velCap-yVel;
-		}*/
 	}
 	
 	@Override
@@ -67,25 +60,20 @@ public class PlayerBall extends Ball {
 			diameter=radius*2*MainClass.scale;
 
 		g.setColor(Color.BLACK);
-		g.fill(new Ellipse2D.Double(x+2,y+2,
-				diameter-4,diameter-4));
-		
-		g.setColor(new Color(255,0,0));
-		g.fill(new Arc2D.Double(x, y,diameter,diameter,
-				0,120,hp>2 ? Arc2D.PIE : Arc2D.CHORD));
-		
-		g.setColor(new Color(0,255,0));
-		g.fill(new Arc2D.Double(x, y,diameter,diameter,
-				120,120,hp>1 ? Arc2D.PIE : Arc2D.CHORD));
-		
-		g.setColor(new Color(0,0,255));
-		g.fill(new Arc2D.Double(x, y,diameter,diameter,
-				240,120,hp>0 ? Arc2D.PIE : Arc2D.CHORD));
+		g.fill(new Ellipse2D.Double(x, y,diameter,diameter));
+		for(int i=0;i<3;i++) {
+			g.setColor(i==0 ? Color.RED : i==1 ? Color.BLUE : Color.GREEN);
+			if(hp>i) {
+				g.fill(new Arc2D.Double(x, y,diameter,diameter,
+					120*i,120,hp>i+3 ? Arc2D.PIE : Arc2D.CHORD));
+			}
+		}
 		
 		MainClass.score=(int)(System.currentTimeMillis()-MainClass.startTime);
-		if(MainClass.topBarWindow!=null);
+		if(MainClass.topBarWindow!=null){
 			MainClass.topBarWindow.setTitle("Score: "+MainClass.score);
 		//g2.drawString("Score: "+MainClass.score,(int)(MainClass.xResolution()*MainClass.scale-100-getLocationOnScreen().x+MainClass.edgePaddingX),100-getLocationOnScreen().y+MainClass.edgePaddingY);
+		}
 	}
 	
 }

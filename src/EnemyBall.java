@@ -17,6 +17,10 @@ public class EnemyBall extends Ball {
 		
 		radius=20;
 		col=Color.blue;
+		while(this.distSq(PlayerBall.player)<100*100){
+			xPos=Math.random()*MainClass.xResolution();
+			yPos=Math.random()*MainClass.resolution;
+		}
 	}
 	
 	@Override

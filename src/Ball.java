@@ -67,7 +67,7 @@ public abstract class Ball {
 		for(int i=0;i<MainClass.balls.size();i++) {
 			b=MainClass.balls.get(i);
 			if(b!=null && id<b.id && collides(b)) {
-				bounce(b);
+				bounce(b,i);
 			}
 		}
 		
@@ -138,6 +138,10 @@ public abstract class Ball {
 	public void bounce(Ball b, double nXVel, double nYVel) {
 		xVel=nXVel;
 		yVel=nYVel;
+	}
+	
+	public void bounce(Ball b,int i){
+		bounce(b);
 	}
 	
 	/**

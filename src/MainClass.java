@@ -49,7 +49,6 @@ public class MainClass {
 		JButton button=new JButton("Start!");
 		button.addActionListener(new ActionListener(){
 
-			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				if(!gameRunning)
 					startGame();
@@ -64,6 +63,9 @@ public class MainClass {
 		//startGame();	//ADD MENUS
 	}
 	
+	/** for shorter code
+	 * @return the x resolution of game space
+	 */
 	public static double xResolution() {
 		return resolution*xWindows/yWindows;
 	}
@@ -116,7 +118,7 @@ public class MainClass {
 				while(gameRunning) {
 					try {
 						//Thread.sleep(1000/30);
-						Thread.sleep(1000/30);
+						Thread.sleep(1000/60);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -135,8 +137,9 @@ public class MainClass {
 						}
 					}
 					
-					if(System.currentTimeMillis()<lastLevelTime+100){
-						addBall();
+					if(System.currentTimeMillis()<lastLevelTime+100 || balls.size()==1){
+						if(balls.size()<5+level*3)
+							addBall();
 					}
 					
 					if(System.currentTimeMillis()>lastLevelTime+30000) {
@@ -154,6 +157,9 @@ public class MainClass {
 		private static final long serialVersionUID = 1L;
 	}
 	
+	/**Adds a regular ball and likely a special ball
+	 * 
+	 */
 	public static void addBall(){
 		Random rnd=new Random();
 		balls.add(
@@ -169,8 +175,8 @@ public class MainClass {
 		case 2:
 			balls.add(
 					new SplitterBall(
-							rnd.nextDouble()%topBarWindow.getWidth(),
-							rnd.nextDouble()%(yWindows*windows[0][0].getHeight())
+							rnd.nextDouble()*xResolution(),
+							rnd.nextDouble()*(resolution)
 					)
 			);
 			break;
@@ -178,18 +184,21 @@ public class MainClass {
 		case 4:
 			balls.add(
 					new AbsorbBall(
-							rnd.nextDouble()%topBarWindow.getWidth(),
-							rnd.nextDouble()%(yWindows*windows[0][0].getHeight())
+							rnd.nextDouble()*xResolution(),
+							rnd.nextDouble()*(resolution)
 					)
 			);
 		}
 	}
 	
+	/**
+	 * Increase the game difficulty, heal the player slightly
+	 */
 	public static void levelUp() {
 		level++;
 		lastLevelTime=System.currentTimeMillis();
 		
-		PlayerBall.player.hp=Math.min(PlayerBall.player.hp+1, 3);
+		PlayerBall.player.hp=Math.min(PlayerBall.player.hp+1, PlayerBall.maxHP);
 		
 		windows[(int) (Math.random()*windows.length)][(int) (Math.random()*windows[0].length)].close();
 	}
